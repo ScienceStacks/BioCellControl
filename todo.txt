@@ -1,0 +1,3 @@
+Ramp in model
+Tests for spiro_model.py
+Compare with Spiro

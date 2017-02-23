@@ -15,8 +15,9 @@ import tellurium as te
 
 class SpiroModel(object):
 
-  model = '''
-      model chemotaxis
+  MODEL_START = "      model chemotaxis\n"
+  MODEL_END = "      end\n"
+  MODEL = '''
         # REACTIONS from Table 3
         # Methylation
         J1: T2R -> T3 + R; k1c*T2R
@@ -110,7 +111,6 @@ class SpiroModel(object):
         T3R = 0
         LT2R = 0
         LT3R = 0
-        L = 0.11e-3
         L= 0 
         T3 = 0
         T4 = 0
@@ -126,14 +126,31 @@ class SpiroModel(object):
         Yp = 0
         Bp = 0
         Z = 40e-6
-      end
   '''
 
   def __init__(self):
-    self._rr = rr = te.loada(SpiroModel.model)
+    self._rr = None
+    self._model = SpiroModel.MODEL
 
-  def getRoadRunner(self):
+  def _assembleModel(self):
+    """
+    Assembles the final the model
+    """
+    return "%s\n%s\n%s" % (SpiroModel.MODEL_START, 
+        self._model, SpiroModel.MODEL_END)
+
+  def startRoadRunner(self):
+    self._rr = te.loada(self._assembleModel())
     return self._rr
+
+  def appendToModel(self, stg):
+    """
+    Adds the string to the end of the model
+    """
+    self._model = "%s\n%s" % (self._model, stg)
+
+  def getModel(self):
+    return self._model
 
   def getReactionRateForId(self, id):
     """
