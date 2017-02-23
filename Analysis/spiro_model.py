@@ -18,6 +18,7 @@ class SpiroModel(object):
   MODEL_START = "      model chemotaxis\n"
   MODEL_END = "      end\n"
   MODEL = '''
+        J0: $x0 -> L; k0*x0
         # REACTIONS from Table 3
         # Methylation
         J1: T2R -> T3 + R; k1c*T2R
@@ -41,15 +42,15 @@ class SpiroModel(object):
         # Demethylation reactions
         J17: T3 + Bp -> T2 + Bp; k_1*T3*Bp
         J18: T4 + Bp -> T3 + Bp; k_2*T4*Bp  
-        J19: LT3 + Bp -> LT2 + Bp; k_3*T3*Bp
-        J20: LT4 + Bp -> LT3 + Bp; k_4*T4*Bp
+        J19: LT3 + Bp -> LT2 + Bp; k_3*LT3*Bp
+        J20: LT4 + Bp -> LT3 + Bp; k_4*LT4*Bp
         # Ligand binding gives details to L + T -> LT, LT -> L + T
-        L + T2 -> LT2; k5*T2*L
-        L + T3 -> LT3; k5*T3*L
-        L + T4 -> LT4; k5*T4*L
-     U: LT2 -> T2 + L; k_5*LT2
-        LT3 -> T3 + L; k_5*LT3
-        LT4 -> T4 + L; k_5*LT4
+        J21: L + T2 -> LT2; k5*T2*L
+        J22: L + T3 -> LT3; k5*T3*L
+        J23: L + T4 -> LT4; k5*T4*L
+        J24: LT2 -> T2 + L; k_5*LT2
+        J25: LT3 -> T3 + L; k_5*LT3
+        J26: LT4 -> T4 + L; k_5*LT4
         # Autophosphorylation reactions
         T2 -> T2p; k8*T2
         T3 -> T3p; k9*T3
@@ -75,7 +76,8 @@ class SpiroModel(object):
    JBp: Bp -> B; k_b*Bp
         Yp + Z -> Y + Z; k_y*Yp*Z    
         # CONSTANTS from Table 3, except k1a (which is noted above).
-        ktuning = 0.1
+        k0 = 0
+        ktuning = 1
         k1b = ktuning*k5
         k1a = 1.7e-6*1/k1b
         k2a = k1a
@@ -111,7 +113,6 @@ class SpiroModel(object):
         T3R = 0
         LT2R = 0
         LT3R = 0
-        L= 0 
         T3 = 0
         T4 = 0
         LT2 = 0
@@ -126,6 +127,7 @@ class SpiroModel(object):
         Yp = 0
         Bp = 0
         Z = 40e-6
+        x0 = 1
   '''
 
   def __init__(self):
