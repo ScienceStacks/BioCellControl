@@ -36,28 +36,24 @@ class ChemotaxisModel(object):
         J0: $x0 -> L; k0*x0
         # REACTIONS from Table 3
         # Methylation
-        #J1: T2R -> T3 + R; k1c*T2R
-        #J2: T3R -> T4 + R; k2c*T3R
-        #J3: LT2R -> LT3 + R; k3c*LT2R
-        #J4: LT3R -> LT4 + R; k4c*LT3R
-        J1: T2 + R  -> T3 + R; k1c*R
-        J2: T3 + R -> T4 + R; k2c*R
-        J3: LT2 + R -> LT3 + R; k3c*R
-        J4: LT3 + R -> LT4 + R; k4c*R
+        J1: T2R -> T3 + R; k1c*T2R
+        J2: T3R -> T4 + R; k2c*T3R
+        J3: LT2R -> LT3 + R; k3c*LT2R
+        J4: LT3R -> LT4 + R; k4c*LT3R
         #   Details of Tn + R <-> TnR
-        #J5: T2R -> T2 + R; k1a*T2R
-        #J6: T2 + R -> T2R; k1b*T2*R
-        #J7: T3R -> T3 + R; k2a*T3R
-        #J8: T3 + R -> T3R; k2b*T3*R
-        #J9: T4R -> T4 + R; k3a*T4R
-        #J10: T4 + R -> T4R; k3b*T4*R
+        J5: T2R -> T2 + R; k1a*T2R
+        J6: T2 + R -> T2R; k1b*T2*R
+        J7: T3R -> T3 + R; k2a*T3R
+        J8: T3 + R -> T3R; k2b*T3*R
+        J9: T4R -> T4 + R; k3a*T4R
+        J10: T4 + R -> T4R; k3b*T4*R
         #   Details of LTn + R <-> LTnR (not in Spiro)
-        #J11: LT2R -> LT2 + R; k1a*LT2R
-        #J12: LT2 + R -> LT2R; k1b*LT2*R
-        #J13: LT3R -> LT3 + R; k2a*LT3R
-        #J14: LT3 + R -> LT3R; k2b*LT3*R
-        #J15: LT4R -> LT4 + R; k3a*LT4R
-        #J16: LT4 + R -> LT4R; k3b*LT4*R
+        J11: LT2R -> LT2 + R; k1a*LT2R
+        J12: LT2 + R -> LT2R; k1b*LT2*R
+        J13: LT3R -> LT3 + R; k2a*LT3R
+        J14: LT3 + R -> LT3R; k2b*LT3*R
+        J15: LT4R -> LT4 + R; k3a*LT4R
+        J16: LT4 + R -> LT4R; k3b*LT4*R
         # Demethylation reactions
         J17: T3 + Bp -> T2 + Bp; k_1*T3*Bp
         J18: T4 + Bp -> T3 + Bp; k_2*T4*Bp  
@@ -78,22 +74,22 @@ class ChemotaxisModel(object):
         J31: LT3 -> LT3p; k12*LT3
         J32: LT4 -> LT4p; k13*LT4
         # B phosphorylations
-        T2p + B -> T2 + Bp; kb*T2p*B
-        T3p + B -> T3 + Bp; kb*T3p*B
-        T4p + B -> T4 + Bp; kb*T4p*B
-        LT2p + B -> LT2 + Bp; kb*LT2p*B
-        LT3p + B -> LT3 + Bp; kb*LT3p*B
-        LT4p + B -> LT4 + Bp; kb*LT4p*B
+        J33:T2p + B -> T2 + Bp; kb*T2p*B
+        J34:T3p + B -> T3 + Bp; kb*T3p*B
+        J35:T4p + B -> T4 + Bp; kb*T4p*B
+        J36:LT2p + B -> LT2 + Bp; kb*LT2p*B
+        J37:LT3p + B -> LT3 + Bp; kb*LT3p*B
+        J38:LT4p + B -> LT4 + Bp; kb*LT4p*B
         # Y phosphorylations
-        T2p + Y -> T2 + Yp; ky*T2p*Y
-        T3p + Y -> T3 + Yp; ky*T3p*Y
-        T4p + Y -> T4 + Yp; ky*T4p*Y
-        LT2p + Y -> LT2 + Yp; ky*LT2p*Y
-        LT3p + Y -> LT3 + Yp; ky*LT3p*Y
-        LT4p + Y -> LT4 + Yp; ky*LT4p*Y
+        J39:T2p + Y -> T2 + Yp; ky*T2p*Y
+        J40:T3p + Y -> T3 + Yp; ky*T3p*Y
+        J41:T4p + Y -> T4 + Yp; ky*T4p*Y
+        J42:LT2p + Y -> LT2 + Yp; ky*LT2p*Y
+        J43:LT3p + Y -> LT3 + Yp; ky*LT3p*Y
+        J43:LT4p + Y -> LT4 + Yp; ky*LT4p*Y
         # B & Y dephosphorylations
-   JBp: Bp -> B; k_b*Bp
-        Yp + Z -> Y + Z; k_y*Yp*Z    
+        J44: Bp -> B; k_b*Bp
+        J45: Yp + Z -> Y + Z; k_y*Yp*Z    
         # CONSTANTS from Table 3, except k1a (which is noted above).
         k0 = 0
         ktuning = 1
@@ -191,12 +187,12 @@ class ChemotaxisModel(object):
     return ReceptorStates(self._result)
 
   def getYpFraction(self):
-    total_Y = self._result['Y'] + self._['Yp']
-    return self._result['Yp']/total_Y
+    total_Y = self._result['[Y]'] + self._result['[Yp]']
+    return self._result['[Yp]']/total_Y
 
   def getBpFraction(self):
-    total_B = self._result['B'] + self._['Bp']
-    return self._result['Bp']/total_B
+    total_B = self._result['[B]'] + self._result['[Bp]']
+    return self._result['[Bp]']/total_B
 
   def getResult(self):
     return self._result
@@ -283,8 +279,11 @@ class ReceptorStates(object):
     is_ligands = [False, True]
     is_phosphorylateds = [False, True]
     methylations = [2, 3, 4]
-    states = [ [ [State(l, p, m, self._result) for l in is_ligands]
-               for p in is_phorphorylateds] for m in methylations]
+    states = []
+    for l in is_ligands:
+      for p in is_phosphorylateds:
+        for m in methylations:
+          states.append(State(l, p, m, self._result))
     return states
 
   def selectStates(self, func):
