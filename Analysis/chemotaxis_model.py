@@ -26,6 +26,13 @@ import tellurium as te
 SIM_START = 0  # Simulation start time
 SIM_END = 500  # Simulation end time
 SIM_SAMPLES_PER_TIME = 10
+# Concentration constants
+B_conc = "1.7e-6"
+R_conc = "0.3e-6"
+T_conc = "8e-6"
+Y_conc = "20e-6"
+Z_conc = "40e-6"
+
 
 
 class ChemotaxisModel(object):
@@ -45,15 +52,15 @@ class ChemotaxisModel(object):
         J6: T2 + R -> T2R; k1b*T2*R
         J7: T3R -> T3 + R; k2a*T3R
         J8: T3 + R -> T3R; k2b*T3*R
-        J9: T4R -> T4 + R; k3a*T4R
-        J10: T4 + R -> T4R; k3b*T4*R
+        #J9: T4R -> T4 + R; k3a*T4R
+        #J10: T4 + R -> T4R; k3b*T4*R
         #   Details of LTn + R <-> LTnR (not in Spiro)
         J11: LT2R -> LT2 + R; k1a*LT2R
         J12: LT2 + R -> LT2R; k1b*LT2*R
         J13: LT3R -> LT3 + R; k2a*LT3R
         J14: LT3 + R -> LT3R; k2b*LT3*R
-        J15: LT4R -> LT4 + R; k3a*LT4R
-        J16: LT4 + R -> LT4R; k3b*LT4*R
+        #J15: LT4R -> LT4 + R; k3a*LT4R
+        #J16: LT4 + R -> LT4R; k3b*LT4*R
         # Demethylation reactions
         J17: T3 + Bp -> T2 + Bp; k_1*T3*Bp
         J18: T4 + Bp -> T3 + Bp; k_2*T4*Bp  
@@ -86,13 +93,13 @@ class ChemotaxisModel(object):
         J41:T4p + Y -> T4 + Yp; ky*T4p*Y
         J42:LT2p + Y -> LT2 + Yp; ky*LT2p*Y
         J43:LT3p + Y -> LT3 + Yp; ky*LT3p*Y
-        J43:LT4p + Y -> LT4 + Yp; ky*LT4p*Y
+        J44:LT4p + Y -> LT4 + Yp; ky*LT4p*Y
         # B & Y dephosphorylations
-        J44: Bp -> B; k_b*Bp
-        J45: Yp + Z -> Y + Z; k_y*Yp*Z    
+        J45: Bp -> B; k_b*Bp
+        J46: Yp + Z -> Y + Z; k_y*Yp*Z    
         # CONSTANTS from Table 3, except k1a (which is noted above).
         k0 = 0
-        ktuning = 1
+        ktuning = 0.1
         k1b = ktuning*k5
         k1a = (1.7e-6)/k1b
         k2a = k1a
@@ -101,7 +108,7 @@ class ChemotaxisModel(object):
         k3b = k1b
         k1c = 0.17
         k2c = 0.1*k1c
-        k3c = 30*k2c
+        k3c = 30*k1c
         k4c = k3c
         k5  = 7e7
         k_5 = 70
@@ -120,7 +127,7 @@ class ChemotaxisModel(object):
         k_b = 0.35
         k_y = 5e5
         # INITIAL VALUES from Table 2
-        B = 1.7e-6
+        B = %s
         Bp = 0
         LT2 = 0
         LT2R = 0
@@ -133,17 +140,17 @@ class ChemotaxisModel(object):
         LT2p = 0
         LT3p = 0
         LT4p = 0
-        R = 0.3e-6
-        T2 = 8e-6
+        R = %s
+        T2 = %s
         T3 = 0
         T4 = 0
         T2R = 0
         T3R = 0
         x0 = 1
-        Y = 20e-6
+        Y = %s
         Yp = 0
-        Z = 40e-6
-  '''
+        Z = %s
+  ''' % (B_conc, R_conc, T_conc, Y_conc, Z_conc)
 
   def __init__(self):
     self._rr = None
@@ -258,6 +265,12 @@ class State(object):
   def getData(self):
     return self._data
 
+  def getNominalData(self):
+    return self._nominal_data
+
+  def setNominalValue(self, adjustment):
+    self._nominal_data = self._data/adjustment
+
 
 class ReceptorStates(object):
   """
@@ -273,7 +286,7 @@ class ReceptorStates(object):
     Takes as input a structured array from a simulation result.
     """
     self._result = result
-    self._states = self._makeStates()
+    self._makeStates()
 
   def _makeStates(self):
     is_ligands = [False, True]
@@ -284,7 +297,9 @@ class ReceptorStates(object):
       for p in is_phosphorylateds:
         for m in methylations:
           states.append(State(l, p, m, self._result))
-    return states
+    self._states = states
+    total = self.sumStates(lambda l,m,p: True)
+    [s.setNominalValue(total) for s in states]
 
   def selectStates(self, func):
     """
@@ -302,4 +317,13 @@ class ReceptorStates(object):
     :return ndarray:
     """
     data = [s.getData() for s in self.selectStates(func)]
+    return(sum(data))
+
+  def frcStates(self, func):
+    """
+    Returns the fraction of time in the specified states
+    :param bool-Function func: arguments are is_ligand, is_phosphorylated, methylation
+    :return ndarray:
+    """
+    data = [s.getNominalData() for s in self.selectStates(func)]
     return(sum(data))
