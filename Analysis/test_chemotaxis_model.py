@@ -1,6 +1,6 @@
 import unittest
 from chemotaxis_model import ChemotaxisModel, ReceptorStates, State,  \
-    T_conc
+    T_conc, StateAggregationFactory, R_conc, B_conc, Y_conc
 
 
 IGNORE_TEST = False
@@ -14,6 +14,9 @@ class TestChemotaxisModelBasic(unittest.TestCase):
 
   def setUp(self):
     self.model = ChemotaxisModel()
+    self.model.initialize()
+    self.model.run(start=0, end=10)
+    self.receptor = ReceptorStates(self.model.getResult())
 
   def testConstructor(self):
     if IGNORE_TEST:
@@ -32,6 +35,30 @@ class TestChemotaxisModelBasic(unittest.TestCase):
     self.model.initialize()
     self.assertTrue(abs(self.model._rr.R - 0.3e-6) <= 1e-9)
     self.model.run()
+
+  def testGetVariable(self):
+    Y = self.model.getVariable("Y")
+    Yp = self.model.getVariable("Yp")
+    b = [y == Y_conc for y in Y + Yp]
+    self.assertTrue(b)
+    #
+    fYp = self.model.getVariable("fYp")
+    b = [y <= 1 and 0 <= y for y in fYp]
+    self.assertTrue(b)
+    #
+    fBp = self.model.getVariable("fBp")
+    b = [y <= 1 and 0 <= y for y in fBp]
+    self.assertTrue(b)
+    #
+    B = self.model.getVariable("B")
+    Bp = self.model.getVariable("Bp")
+    b = [y == B_conc for y in B + Bp]
+    self.assertTrue(b)
+    #
+    total = self.model.getVariable("t___")
+    b = [y == T_conc for y in total]
+    self.assertTrue(b)
+    
 
 
 # pylint: disable=W0212,C0111,R0904
@@ -112,7 +139,50 @@ class TestReceptorStates(unittest.TestCase):
     total = receptor.frcStates(func)
     b = all([abs(1-x) < 0.01 for x in total])
     self.assertTrue(b)
-    
+
+
+# pylint: disable=W0212,C0111,R0904
+class TestStateAggregationFactory(unittest.TestCase):
+
+  def setUp(self):
+    self.model = ChemotaxisModel()
+    self.model.initialize()
+    self.model.run(start=0, end=10)
+    self.receptor = ReceptorStates(self.model.getResult())
+    self.factory = StateAggregationFactory(self.receptor)
+
+  def testGetFunc(self):
+    func = self.factory._getFunc("_", 0, lambda x: True)
+    self.assertTrue(func(True))
+    func = self.factory._getFunc("T", 0, lambda x: x in ["T", "F"])
+    self.assertTrue(func(True))
+    self.assertFalse(func(False))
+    with self.assertRaises(ValueError):
+      self.factory._getFunc("T", 0, lambda x: x in ["F"])
+    func = self.factory._getFunc("2", 0, lambda x: int(x) < 5)
+    self.assertTrue(func(2))
+    self.assertFalse(func(3))
+
+  def testV(self):
+    value = self.factory.v("t___")
+    expected = self.receptor.sumStates(lambda l,p,m: True)
+    pairs = zip(value, expected)
+    b = all([abs(x-y) < abs(y)*0.001 for x,y in pairs])
+    self.assertTrue(b)
+    count = len(expected)
+    names = ["_T3", "T_3", "TT_", "T__", "_T_", "__3", "___"]
+    for name in names:
+      try:
+        variable = "f%s" % name
+        value = self.factory.v(variable)
+        self.assertEqual(len(value), count)
+        variable = "t%s" % name
+        value = self.factory.v(variable)
+        self.assertEqual(len(value), count)
+      except Exception as e:
+        import pdb; pdb.set_trace()
+        pass
+
 
 
 if __name__ == '__main__':

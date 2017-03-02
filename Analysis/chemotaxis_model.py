@@ -41,7 +41,7 @@ class ChemotaxisModel(object):
   MODEL_END = "      end\n"
   MODEL = '''
         J0: $x0 -> L; k0*x0
-        # REACTIONS from Table 3
+        # REACTIONS from Spiro, Table 3
         # Methylation
         J1: T2R -> T3 + R; k1c*T2R
         J2: T3R -> T4 + R; k2c*T3R
@@ -97,7 +97,7 @@ class ChemotaxisModel(object):
         # B & Y dephosphorylations
         J45: Bp -> B; k_b*Bp
         J46: Yp + Z -> Y + Z; k_y*Yp*Z    
-        # CONSTANTS from Table 3, except k1a (which is noted above).
+        # CONSTANTS from Spiro, Table 3, except k1a (which is noted above).
         k0 = 0
         ktuning = 0.1
         k1b = ktuning*k5
@@ -126,7 +126,7 @@ class ChemotaxisModel(object):
         ky = 3e7
         k_b = 0.35
         k_y = 5e5
-        # INITIAL VALUES from Table 2
+        # INITIAL VALUES from Spiro, Table 2
         B = %s
         Bp = 0
         LT2 = 0
@@ -156,6 +156,7 @@ class ChemotaxisModel(object):
     self._rr = None
     self._model = ChemotaxisModel.MODEL
     self._result = None
+    self._factory = None  # State aggregation factory
 
   def _assembleModel(self):
     """
@@ -179,6 +180,8 @@ class ChemotaxisModel(object):
     if samples is None:
       samples = SIM_SAMPLES_PER_TIME*(end-start)
     self._result = self._rr.simulate(start, end, samples)
+    states = self.getReceptorStates()
+    self._factory = StateAggregationFactory(states)
     return self._result
 
   def appendToModel(self, stg):
@@ -194,15 +197,22 @@ class ChemotaxisModel(object):
     return ReceptorStates(self._result)
 
   def getYpFraction(self):
-    total_Y = self._result['[Y]'] + self._result['[Yp]']
-    return self._result['[Yp]']/total_Y
+    Yp = self.getConcentrationForId('Yp')
+    Y = self.getConcentrationForId('Y')
+    total_Y = Yp + Y
+    return Yp/total_Y
 
   def getBpFraction(self):
-    total_B = self._result['[B]'] + self._result['[Bp]']
-    return self._result['[Bp]']/total_B
+    Bp = self.getConcentrationForId('Bp')
+    B = self.getConcentrationForId('B')
+    total_B = Bp + B
+    return Bp/total_B
 
   def getResult(self):
     return self._result
+
+  def _makeVariableName(self, name):
+    return "[%s]" % name
 
   def getReactionRateForId(self, id):
     """
@@ -219,8 +229,26 @@ class ChemotaxisModel(object):
     :param str id: 
     :return float:
     """
-    idx = self._rr.getFloatingSpeciesIds().index(id)
-    return self._rr.getFloatingSpeciesConcentrations()[idx]
+    return self._result[self._makeVariableName(id)]
+
+  def getVariable(self, name):
+    """
+    Provides variables in the model.
+    :param str name:
+    :return np.array:
+    """
+    known_names = ['Y', 'Yp', 'R', 'B', 'Bp', 'L']
+    if name == "time":
+      result = self._result["time"]
+    elif name in known_names:
+      result = self.getConcentrationForId(name)
+    elif name == "fYp":
+      result = self.getYpFraction()
+    elif name == "fBp":
+      result = self.getBpFraction()
+    else:
+      result = self._factory.v(name)
+    return result
 
 
 class State(object):
@@ -327,3 +355,73 @@ class ReceptorStates(object):
     """
     data = [s.getNominalData() for s in self.selectStates(func)]
     return(sum(data))
+
+class StateAggregationFactory(object):
+  """
+  State aggregations are summations of values of a subset of states.
+  An aggregation is
+  either a total concentration, denoted by the prefix "t", or a fraction of the total
+  concentration of receptors, denoted by "f". States have a three tuple: l, p, m. "l" is
+  true (T) if the receptor is bound to a ligand; otherwise it is false. "p" is true if the
+  receptor is phosphorylated; otherwise it is false. "m" is the level of methylation. If
+  there is no specification for the state component, an underscore is used.
+  For example, the fraction of receptors that are bound to ligands and are phosphorylated is
+  denoted by "fTT_", and the total concentration of receptors that are bound to ligands,
+  and have a methylation of 3 is "tT_3". The total concentration of receptors is all states
+  is "t___". Note that "f___" should be 1.
+  """
+
+  def __init__(self, receptor_states):
+    self._receptor_states = receptor_states
+
+  def _getFunc(self, name, position, validation_function):
+    """
+    Creates a function to select for a part of a name
+    :param str name: name being interpreted
+    :param int position: position of the letter in the name
+    :param Function validation_function:
+    :return Function: function used to select one part of state
+    :raises ValueError: invalid character
+    """
+    letter = name[position]
+    if letter ==  "_":
+      func = (lambda x: True)
+      is_valid = True
+    else:
+      try:
+        is_valid = validation_function(letter)
+      except Exception:
+        is_valid = False
+      if is_valid and letter == "T":
+        func = (lambda x: x)
+      elif is_valid and letter == "F":
+        func = (lambda x: not x)
+      elif is_valid and isinstance(int(letter), int):
+        func = eval("(lambda x: x == %s)" % letter)
+      else:
+        is_valid = False
+    if not is_valid:
+      raise ValueError("In name %s, the character %s in position %d is invalid."
+          % (name, letter, position))
+    return func
+  
+  def v(self, name):
+    """
+    Returns the values for the name
+    :param list-of-4-char name:
+    """
+    # Construct the globals algorithmically using eval
+    if len(name) != 4:
+      raise ValueError("Name must be 4 characters.")
+    lfunc = self._getFunc(name, 1,
+        lambda x: x in ["T", "F"])
+    pfunc = self._getFunc(name, 2,
+        lambda x: x in ["T", "F"])
+    mfunc = self._getFunc(name, 3, 
+        lambda x: isinstance(int(x),int) and int(x) > 1 and int(x) < 5)
+    func = (lambda l,p,m: lfunc(l) and pfunc(p) and mfunc(m))
+    if name[0] == "t":
+      result = self._receptor_states.sumStates(func)
+    else:
+      result = self._receptor_states.frcStates(func)
+    return result
