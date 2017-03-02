@@ -237,17 +237,29 @@ class ChemotaxisModel(object):
     :param str name:
     :return np.array:
     """
-    known_names = ['Y', 'Yp', 'R', 'B', 'Bp', 'L']
+    result = None
+    # Try the special names
     if name == "time":
       result = self._result["time"]
-    elif name in known_names:
-      result = self.getConcentrationForId(name)
     elif name == "fYp":
       result = self.getYpFraction()
     elif name == "fBp":
       result = self.getBpFraction()
     else:
-      result = self._factory.v(name)
+      # See if it's a state name
+      try:
+        result = self._factory.v(name)
+      except:
+        pass
+      if result is None:
+        # Assume it's a model name
+        try:
+          if result is None:
+            result = self.getConcentrationForId(name)
+        except:
+          pass
+    if result is None:
+      raise ValueError("Variable %s not found." % name)
     return result
 
 
