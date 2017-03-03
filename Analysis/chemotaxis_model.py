@@ -26,9 +26,10 @@ import tellurium as te
 SIM_START = 0  # Simulation start time
 SIM_END = 500  # Simulation end time
 SIM_SAMPLES_PER_TIME = 10
+TIME = "time"
 # Concentration constants
 B_conc = "1.7e-6"
-R_conc = "0.3e-6"
+R_conc = "0.75e-6"  # Differs from Spiro's 0.3e-6
 T_conc = "8e-6"
 Y_conc = "20e-6"
 Z_conc = "40e-6"
@@ -99,7 +100,7 @@ class ChemotaxisModel(object):
         J46: Yp + Z -> Y + Z; k_y*Yp*Z    
         # CONSTANTS from Spiro, Table 3, except k1a (which is noted above).
         k0 = 0
-        ktuning = 0.1
+        ktuning = 10
         k1b = ktuning*k5
         k1a = (1.7e-6)/k1b
         k2a = k1a
@@ -179,6 +180,10 @@ class ChemotaxisModel(object):
     """
     if samples is None:
       samples = SIM_SAMPLES_PER_TIME*(end-start)
+    selection = self._rr.getFloatingSpeciesIds()
+    selection.extend(self._rr.getReactionIds())
+    selection.append(TIME)
+    self._rr.timeCourseSelections = selection
     self._result = self._rr.simulate(start, end, samples)
     states = self.getReceptorStates()
     self._factory = StateAggregationFactory(states)
@@ -197,14 +202,14 @@ class ChemotaxisModel(object):
     return ReceptorStates(self._result)
 
   def getYpFraction(self):
-    Yp = self.getConcentrationForId('Yp')
-    Y = self.getConcentrationForId('Y')
+    Yp = self.getVariable('Yp')
+    Y = self.getVariable('Y')
     total_Y = Yp + Y
     return Yp/total_Y
 
   def getBpFraction(self):
-    Bp = self.getConcentrationForId('Bp')
-    B = self.getConcentrationForId('B')
+    Bp = self.getVariable('Bp')
+    B = self.getVariable('B')
     total_B = Bp + B
     return Bp/total_B
 
@@ -213,23 +218,6 @@ class ChemotaxisModel(object):
 
   def _makeVariableName(self, name):
     return "[%s]" % name
-
-  def getReactionRateForId(self, id):
-    """
-    Provides the reaction rate for the id
-    :param str id: name of the reaction
-    :return float:
-    """
-    idx = self._rr.getReactionIds().index(id)
-    return self._rr.getReactionRates()[idx]
-
-  def getConcentrationForId(self, id):
-    """
-    Provides the concentration for the chemical species
-    :param str id: 
-    :return float:
-    """
-    return self._result[self._makeVariableName(id)]
 
   def getVariable(self, name):
     """
@@ -255,10 +243,11 @@ class ChemotaxisModel(object):
         # Assume it's a model name
         try:
           if result is None:
-            result = self.getConcentrationForId(name)
+            result = self._result[name]
         except:
           pass
     if result is None:
+      import pdb; pdb.set_trace()
       raise ValueError("Variable %s not found." % name)
     return result
 
@@ -290,7 +279,8 @@ class State(object):
     name = "%s%d" % (name, self.methylation)
     if self.is_phosphorylated:
       name = name + "p"
-    return "[" + name + "]"
+    #return "[" + name + "]"
+    return name
 
   def _extractData(self, simulation_result):
     try:

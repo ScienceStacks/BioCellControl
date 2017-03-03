@@ -58,6 +58,13 @@ class TestChemotaxisModelBasic(unittest.TestCase):
     total = self.model.getVariable("t___")
     b = [y == T_conc for y in total]
     self.assertTrue(b)
+    #
+    J1 = self.model.getVariable("J1")
+    self.assertEqual(len(J1), len(Bp))
+    #
+    J1 = self.model.getVariable("time")
+    self.assertEqual(len(J1), len(Bp))
+ 
     
 
 
@@ -85,10 +92,10 @@ class TestState(unittest.TestCase):
     self.assertTrue(b)
 
   def testBasics(self):
-    self._testBasics(True, True, 2, '[LT2p]')
-    self._testBasics(False, True, 2, '[T2p]')
-    self._testBasics(True, False, 2, '[LT2]')
-    self._testBasics(True, True, 3, '[LT3p]')
+    self._testBasics(True, True, 2, 'LT2p')
+    self._testBasics(False, True, 2, 'T2p')
+    self._testBasics(True, False, 2, 'LT2')
+    self._testBasics(True, True, 3, 'LT3p')
 
 
 # pylint: disable=W0212,C0111,R0904
