@@ -1,0 +1,2 @@
+#!/bin/bash
+python ../SbStar/run.py < $1.tmpl > $1.mdl

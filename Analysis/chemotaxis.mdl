@@ -1,0 +1,194 @@
+# Template file for the Spiro model of chemotaxis in PNAS, 1999.
+# The species B, R, T2, R, Y are specified separately.
+##! SbStar Vesion 1.0 {'l': ['L', ''], 'm': ['2', '3', '4'], 'p': ['P', ''], 'r': ['R', '']}
+J0: $x0 -> L; k0*x0
+# REACTIONS from Spiro, Table 3
+# Methylation
+#J1_2{p}R: T2{p}R -> T3{p} + R; k1c*T2{p}R
+J1_2PR: T2PR -> T3P + R; k1c*T2PR
+J1_2R: T2R -> T3 + R; k1c*T2R
+#J1_3{p}R: T3{p}R -> T4{p} + R; k2c*T3{p}R
+J1_3PR: T3PR -> T4P + R; k2c*T3PR
+J1_3R: T3R -> T4 + R; k2c*T3R
+#J1_L2{p}R: LT2{p}R -> LT3{p} + R; k3c*LT2{p}R
+J1_L2PR: LT2PR -> LT3P + R; k3c*LT2PR
+J1_L2R: LT2R -> LT3 + R; k3c*LT2R
+#J1_L3{p}R: LT3{p}R -> LT4{p} + R; k4c*LT3{p}R
+J1_L3PR: LT3PR -> LT4P + R; k4c*LT3PR
+J1_L3R: LT3R -> LT4 + R; k4c*LT3R
+# Demethylations
+#J4_{l}3{p}{r}: {l}T3{p}{r} + Bp -> {l}T2{p}{r} + Bp; k_1*{l}T3{p}{r}*Bp
+J4_L3PR: LT3PR + Bp -> LT2PR + Bp; k_1*LT3PR*Bp
+J4_L3R: LT3R + Bp -> LT2R + Bp; k_1*LT3R*Bp
+J4_L3P: LT3P + Bp -> LT2P + Bp; k_1*LT3P*Bp
+J4_L3: LT3 + Bp -> LT2 + Bp; k_1*LT3*Bp
+J4_3PR: T3PR + Bp -> T2PR + Bp; k_1*T3PR*Bp
+J4_3R: T3R + Bp -> T2R + Bp; k_1*T3R*Bp
+J4_3P: T3P + Bp -> T2P + Bp; k_1*T3P*Bp
+J4_3: T3 + Bp -> T2 + Bp; k_1*T3*Bp
+#J4_{l}4{p}{r}: {l}T4{p}{r} + Bp -> {l}T3{p}{r} + Bp; k_1*{l}T4{p}{r}*Bp
+J4_L4PR: LT4PR + Bp -> LT3PR + Bp; k_1*LT4PR*Bp
+J4_L4R: LT4R + Bp -> LT3R + Bp; k_1*LT4R*Bp
+J4_L4P: LT4P + Bp -> LT3P + Bp; k_1*LT4P*Bp
+J4_L4: LT4 + Bp -> LT3 + Bp; k_1*LT4*Bp
+J4_4PR: T4PR + Bp -> T3PR + Bp; k_1*T4PR*Bp
+J4_4R: T4R + Bp -> T3R + Bp; k_1*T4R*Bp
+J4_4P: T4P + Bp -> T3P + Bp; k_1*T4P*Bp
+J4_4: T4 + Bp -> T3 + Bp; k_1*T4*Bp
+#   Details of *T* + R <-> *T*R
+#J2_{l}{m}{p}: {l}T{m}{p}R -> {l}T{m}{p} + R; k1a*{l}T{m}{p}R
+J2_L2P: LT2PR -> LT2P + R; k1a*LT2PR
+J2_L2: LT2R -> LT2 + R; k1a*LT2R
+J2_L3P: LT3PR -> LT3P + R; k1a*LT3PR
+J2_L3: LT3R -> LT3 + R; k1a*LT3R
+J2_L4P: LT4PR -> LT4P + R; k1a*LT4PR
+J2_L4: LT4R -> LT4 + R; k1a*LT4R
+J2_2P: T2PR -> T2P + R; k1a*T2PR
+J2_2: T2R -> T2 + R; k1a*T2R
+J2_3P: T3PR -> T3P + R; k1a*T3PR
+J2_3: T3R -> T3 + R; k1a*T3R
+J2_4P: T4PR -> T4P + R; k1a*T4PR
+J2_4: T4R -> T4 + R; k1a*T4R
+#J3_{l}{m}{p}: {l}T{m}{p} + R -> {l}T{m}{p}R; k1b*{l}T{m}{p}
+J3_L2P: LT2P + R -> LT2PR; k1b*LT2P
+J3_L2: LT2 + R -> LT2R; k1b*LT2
+J3_L3P: LT3P + R -> LT3PR; k1b*LT3P
+J3_L3: LT3 + R -> LT3R; k1b*LT3
+J3_L4P: LT4P + R -> LT4PR; k1b*LT4P
+J3_L4: LT4 + R -> LT4R; k1b*LT4
+J3_2P: T2P + R -> T2PR; k1b*T2P
+J3_2: T2 + R -> T2R; k1b*T2
+J3_3P: T3P + R -> T3PR; k1b*T3P
+J3_3: T3 + R -> T3R; k1b*T3
+J3_4P: T4P + R -> T4PR; k1b*T4P
+J3_4: T4 + R -> T4R; k1b*T4
+# Ligand binding and unbinding
+#J5_{m}{p}{r}: L + T{m}{p}{r} -> LT{m}{p}{r}; k5*L*T{m}{p}{r}
+J5_2PR: L + T2PR -> LT2PR; k5*L*T2PR
+J5_2R: L + T2R -> LT2R; k5*L*T2R
+J5_2P: L + T2P -> LT2P; k5*L*T2P
+J5_2: L + T2 -> LT2; k5*L*T2
+J5_3PR: L + T3PR -> LT3PR; k5*L*T3PR
+J5_3R: L + T3R -> LT3R; k5*L*T3R
+J5_3P: L + T3P -> LT3P; k5*L*T3P
+J5_3: L + T3 -> LT3; k5*L*T3
+J5_4PR: L + T4PR -> LT4PR; k5*L*T4PR
+J5_4R: L + T4R -> LT4R; k5*L*T4R
+J5_4P: L + T4P -> LT4P; k5*L*T4P
+J5_4: L + T4 -> LT4; k5*L*T4
+#J6_{m}{p}{r}: LT{m}{p}{r} -> L + T{m}{p}{r}; k_5*LT{m}{p}{r}
+J6_2PR: LT2PR -> L + T2PR; k_5*LT2PR
+J6_2R: LT2R -> L + T2R; k_5*LT2R
+J6_2P: LT2P -> L + T2P; k_5*LT2P
+J6_2: LT2 -> L + T2; k_5*LT2
+J6_3PR: LT3PR -> L + T3PR; k_5*LT3PR
+J6_3R: LT3R -> L + T3R; k_5*LT3R
+J6_3P: LT3P -> L + T3P; k_5*LT3P
+J6_3: LT3 -> L + T3; k_5*LT3
+J6_4PR: LT4PR -> L + T4PR; k_5*LT4PR
+J6_4R: LT4R -> L + T4R; k_5*LT4R
+J6_4P: LT4P -> L + T4P; k_5*LT4P
+J6_4: LT4 -> L + T4; k_5*LT4
+# Autophosphorylations
+#J7_2{r}: T2{r} -> T2p{r}; k8*T2{r}
+J7_2R: T2R -> T2pR; k8*T2R
+J7_2: T2 -> T2p; k8*T2
+#J7_3{r}: T3{r} -> T3p{r}; k9*T3{r}
+J7_3R: T3R -> T3pR; k9*T3R
+J7_3: T3 -> T3p; k9*T3
+#J7_4{r}: T4{r} -> T4p{r}; k10*T4{r}
+J7_4R: T4R -> T4pR; k10*T4R
+J7_4: T4 -> T4p; k10*T4
+#J7_L2{r}: LT2{r} -> LT2p{r}; k11*LT2{r}
+J7_L2R: LT2R -> LT2pR; k11*LT2R
+J7_L2: LT2 -> LT2p; k11*LT2
+#J7_L3{r}: LT3{r} -> LT3p{r}; k12*LT3{r}
+J7_L3R: LT3R -> LT3pR; k12*LT3R
+J7_L3: LT3 -> LT3p; k12*LT3
+#J7_L4{r}: LT4{r} -> LT4p{r}; k13*LT4{r}
+J7_L4R: LT4R -> LT4pR; k13*LT4R
+J7_L4: LT4 -> LT4p; k13*LT4
+# B phosphorylations
+#J8_{l}{m}{r}: {l}T{m}p{r} + B -> {l}T{m}{r} + Bp; kb*{l}T{m}p{r}*B
+J8_L2R: LT2pR + B -> LT2R + Bp; kb*LT2pR*B
+J8_L2: LT2p + B -> LT2 + Bp; kb*LT2p*B
+J8_L3R: LT3pR + B -> LT3R + Bp; kb*LT3pR*B
+J8_L3: LT3p + B -> LT3 + Bp; kb*LT3p*B
+J8_L4R: LT4pR + B -> LT4R + Bp; kb*LT4pR*B
+J8_L4: LT4p + B -> LT4 + Bp; kb*LT4p*B
+J8_2R: T2pR + B -> T2R + Bp; kb*T2pR*B
+J8_2: T2p + B -> T2 + Bp; kb*T2p*B
+J8_3R: T3pR + B -> T3R + Bp; kb*T3pR*B
+J8_3: T3p + B -> T3 + Bp; kb*T3p*B
+J8_4R: T4pR + B -> T4R + Bp; kb*T4pR*B
+J8_4: T4p + B -> T4 + Bp; kb*T4p*B
+# Y phosphorylations
+#J9_{l}{m}{r}: {l}T{m}p{r} + Y -> {l}T{m}{r} + Yp; ky*{l}T{m}p{r}*Y
+J9_L2R: LT2pR + Y -> LT2R + Yp; ky*LT2pR*Y
+J9_L2: LT2p + Y -> LT2 + Yp; ky*LT2p*Y
+J9_L3R: LT3pR + Y -> LT3R + Yp; ky*LT3pR*Y
+J9_L3: LT3p + Y -> LT3 + Yp; ky*LT3p*Y
+J9_L4R: LT4pR + Y -> LT4R + Yp; ky*LT4pR*Y
+J9_L4: LT4p + Y -> LT4 + Yp; ky*LT4p*Y
+J9_2R: T2pR + Y -> T2R + Yp; ky*T2pR*Y
+J9_2: T2p + Y -> T2 + Yp; ky*T2p*Y
+J9_3R: T3pR + Y -> T3R + Yp; ky*T3pR*Y
+J9_3: T3p + Y -> T3 + Yp; ky*T3p*Y
+J9_4R: T4pR + Y -> T4R + Yp; ky*T4pR*Y
+J9_4: T4p + Y -> T4 + Yp; ky*T4p*Y
+# B & Y dephosphorylations
+J45: Bp -> B; k_b*Bp
+J46: Yp + Z -> Y + Z; k_y*Yp*Z
+# CONSTANTS from Spiro, Table 3, except k1a (which is noted above).
+k0 = 0
+ktuning = 10
+k1b = ktuning*k5
+k1a = (1.7e-6)/k1b
+k2a = k1a
+k2b = k1b
+k3a = k1a
+k3b = k1b
+k1c = 0.17
+k2c = 0.1*k1c
+k3c = 30*k1c
+k4c = k3c
+k5  = 7e7
+k_5 = 70
+k_1 = 4e5
+k_2 = 3e4
+k_3 = k_1
+k_4 = k_2
+k8 = 15
+k9 = 3*k8
+k10 = 3.2*k8
+k11 = 0
+k12 = 1.1*k8
+k13 = 0.72*k10
+kb = 8e5
+ky = 3e7
+k_b = 0.35
+k_y = 5e5
+# INITIAL VALUES from Spiro, Table 2
+Bp = 0
+LT2 = 0
+LT2R = 0
+LT3 = 0
+LT3R = 0
+LT4 = 0
+T2p = 0
+T3p = 0
+T4p = 0
+LT2p = 0
+LT3p = 0
+LT4p = 0
+T3 = 0
+T4 = 0
+T2R = 0
+T3R = 0
+x0 = 1
+Yp = 0
+#        B = %s
+#        R = %s
+#        T2 = %s
+#        Y = %s
+#        Z = %s

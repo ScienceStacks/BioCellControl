@@ -1,0 +1,81 @@
+# Can index the constants by the values of the template values        
+
+{%declare% p: P, None}
+{%declare% l: L, None}
+{%declare% r: R, None}
+{%declare% m: 2, 3, 4}
+
+        J0: $x0 -> L; k0*x0
+        # REACTIONS from Spiro, Table 3
+        # Methylation
+        J{l}T{m}{p}Rf: {l}T{m}{p} + R -> {l}T{m}{p}R; kf{m}*{l}T{m}{p}*R
+        J{l}T{m}{p}Rr: {l}T{m}{p}R -> {l}T{m}{p} + R; kr{m}*{l}T{m}{p}R
+{%declare% m: 2, 3}
+        J{l}T{m}{p}R: {l}T{m}{p}R -> {l}T{m+1}{p} + R; k?*{l}T{m}{p}R  # k1c->k2c, k2c->k3c
+        # Demethylation
+{%declare% m: 3, 4}
+        J{l}T{m}{p}{r}Bp: {l}T{m}{p}{r} + Bp -> {l}T{m-1}{p}{r} + Bp; k?*{l}T{m}{p}{r}*Bp
+{%declare% m: 2, 3, 4}
+        # Ligand association and disassociation
+        JT{m}{p}{r}Lf: L + T{m}{p}{r} -> LT{m}{p}{r}; k5*T{m}{p}{r}*L
+        JT{m}{p}{r}Lr: LT{m}{p}{r} -> T{m}{p}{r} + L; k_5*LT{m}{p}{r}
+        # Phosphorylations and dephosphorylations
+        {l}T{m}{r} -> {l}T{m}p{r}; k?*{l}T{m}{r}
+        {l}T{m}{p}{r} + B -> {l}T{m}{r} + Bp; k?*{l}T{m}{p}{r}*B
+        {l}T{m}{p}{r} + Y -> {l}T{m}{r} + Yp; k?*{l}T{m}{p}{r}*Y
+        Bp -> B; k_b*Bp
+        Yp + Z -> Y + Z; k_y*Yp*Z    
+
+        # CONSTANTS from Spiro, Table 3, except k1a (which is noted above).
+        k0 = 0
+        ktuning = 10
+        k1b = ktuning*k5
+        k1a = (1.7e-6)/k1b
+        k2a = k1a
+        k2b = k1b
+        k3a = k1a
+        k3b = k1b
+        k1c = 0.17
+        k2c = 0.1*k1c
+        k3c = 30*k1c
+        k4c = k3c
+        k5  = 7e7
+        k_5 = 70
+        k_1 = 4e5
+        k_2 = 3e4
+        k_3 = k_1
+        k_4 = k_2
+        k8 = 15
+        k9 = 3*k8
+        k10 = 3.2*k8
+        k11 = 0
+        k12 = 1.1*k8
+        k13 = 0.72*k10
+        kb = 8e5
+        ky = 3e7
+        k_b = 0.35
+        k_y = 5e5
+        # INITIAL VALUES from Spiro, Table 2
+        B = %s
+        Bp = 0
+        LT2 = 0
+        LT2R = 0
+        LT3 = 0
+        LT3R = 0
+        LT4 = 0
+        T2p = 0
+        T3p = 0
+        T4p = 0
+        LT2p = 0
+        LT3p = 0
+        LT4p = 0
+        R = %s
+        T2 = %s
+        T3 = 0
+        T4 = 0
+        T2R = 0
+        T3R = 0
+        x0 = 1
+        Y = %s
+        Yp = 0
+        Z = %s

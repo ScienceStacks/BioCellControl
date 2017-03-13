@@ -1,0 +1,86 @@
+# Template file for the Spiro model of chemotaxis in PNAS, 1999.
+# The species B, R, T2, R, Y are specified separately.
+#! SbStar Vesion 1.0 {'l': ['L', ''], 'm': ['2', '3', '4'], 'p': ['P', ''], 'r': ['R', '']} 
+J0: $x0 -> L; k0*x0
+# REACTIONS from Spiro, Table 3
+# Methylation
+J1_2{p}R: T2{p}R -> T3{p} + R; k1c*T2{p}R
+J1_3{p}R: T3{p}R -> T4{p} + R; k2c*T3{p}R
+J1_L2{p}R: LT2{p}R -> LT3{p} + R; k3c*LT2{p}R
+J1_L3{p}R: LT3{p}R -> LT4{p} + R; k4c*LT3{p}R
+# Demethylations
+J4_{l}3{p}{r}: {l}T3{p}{r} + Bp -> {l}T2{p}{r} + Bp; k_1*{l}T3{p}{r}*Bp
+J4_{l}4{p}{r}: {l}T4{p}{r} + Bp -> {l}T3{p}{r} + Bp; k_1*{l}T4{p}{r}*Bp
+#   Details of *T* + R <-> *T*R
+J2_{l}{m}{p}: {l}T{m}{p}R -> {l}T{m}{p} + R; k1a*{l}T{m}{p}R
+J3_{l}{m}{p}: {l}T{m}{p} + R -> {l}T{m}{p}R; k1b*{l}T{m}{p}
+# Ligand binding and unbinding
+J5_{m}{p}{r}: L + T{m}{p}{r} -> LT{m}{p}{r}; k5*L*T{m}{p}{r}
+J6_{m}{p}{r}: LT{m}{p}{r} -> L + T{m}{p}{r}; k_5*LT{m}{p}{r}
+# Autophosphorylations
+J7_2{r}: T2{r} -> T2p{r}; k8*T2{r}
+J7_3{r}: T3{r} -> T3p{r}; k9*T3{r}
+J7_4{r}: T4{r} -> T4p{r}; k10*T4{r}
+J7_L2{r}: LT2{r} -> LT2p{r}; k11*LT2{r}
+J7_L3{r}: LT3{r} -> LT3p{r}; k12*LT3{r}
+J7_L4{r}: LT4{r} -> LT4p{r}; k13*LT4{r}
+# B phosphorylations
+J8_{l}{m}{r}: {l}T{m}p{r} + B -> {l}T{m}{r} + Bp; kb*{l}T{m}p{r}*B
+# Y phosphorylations
+J9_{l}{m}{r}: {l}T{m}p{r} + Y -> {l}T{m}{r} + Yp; ky*{l}T{m}p{r}*Y
+# B & Y dephosphorylations
+J45: Bp -> B; k_b*Bp
+J46: Yp + Z -> Y + Z; k_y*Yp*Z    
+# CONSTANTS from Spiro, Table 3, except k1a (which is noted above).
+k0 = 0
+ktuning = 10
+k1b = ktuning*k5
+k1a = (1.7e-6)/k1b
+k2a = k1a
+k2b = k1b
+k3a = k1a
+k3b = k1b
+k1c = 0.17
+k2c = 0.1*k1c
+k3c = 30*k1c
+k4c = k3c
+k5  = 7e7
+k_5 = 70
+k_1 = 4e5
+k_2 = 3e4
+k_3 = k_1
+k_4 = k_2
+k8 = 15
+k9 = 3*k8
+k10 = 3.2*k8
+k11 = 0
+k12 = 1.1*k8
+k13 = 0.72*k10
+kb = 8e5
+ky = 3e7
+k_b = 0.35
+k_y = 5e5
+# INITIAL VALUES from Spiro, Table 2
+Bp = 0
+LT2 = 0
+LT2R = 0
+LT3 = 0
+LT3R = 0
+LT4 = 0
+T2p = 0
+T3p = 0
+T4p = 0
+LT2p = 0
+LT3p = 0
+LT4p = 0
+T3 = 0
+T4 = 0
+T2R = 0
+T3R = 0
+x0 = 1
+Yp = 0
+#        B = %s
+#        R = %s
+#        T2 = %s
+#        Y = %s
+#        Z = %s

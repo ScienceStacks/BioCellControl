@@ -1,0 +1,3 @@
+[submodule "SbStar"]
+	path = SbStar
+	url = https://github.com/ScienceStacks/SbStar.git
