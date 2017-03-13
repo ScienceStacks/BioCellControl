@@ -19,7 +19,7 @@ class TestDataPlotter(unittest.TestCase):
     self.plotter = DataPlotter(self.model)
 
   def testLines(self):
-    self.plotter.lines(["fYp", "Bp", "fTT_"])
+    self.plotter.lines(["fYp", "Bp", "fTT__"])
 
 
 if __name__ == '__main__':

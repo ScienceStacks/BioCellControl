@@ -108,7 +108,11 @@ class ChemotaxisModel(object):
     """
     self._antimony_model = "%s\n%s" % (self._antimony_model, stg)
 
-  def getModel(self, is_template):
+  def getModel(self, is_template=True):
+    """
+    :param bool is_template: return the templated model
+    :return str:
+    """
     if is_template:
       return self._template_model
     else:

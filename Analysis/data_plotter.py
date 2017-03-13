@@ -46,7 +46,7 @@ class DataPlotter(object):
       else:
         ymin = yrange[0]
         ymax = yrange[1]
-      locs,labels = yticks()
-      yticks(locs, map(lambda x: "%.1f" % x, locs*1e9))
+      locs,labels = plt.yticks()
+      plt.yticks(locs, map(lambda x: "%.1f" % x, locs*1e9))
       plt.axis([xmin, xmax, ymin, ymax])
       plt.plot(xvals, yvals)
