@@ -38,7 +38,6 @@ class DataPlotter(object):
         frame.axes.get_xaxis().set_visible(False)
       else:
         plt.xlabel(TIME_VAR)
-      plt.ylabel(names[idx])
       yvals = self._provider.getVariable(names[idx])
       if yrange is None:
         ymin = min(yvals)*0.95
@@ -46,7 +45,13 @@ class DataPlotter(object):
       else:
         ymin = yrange[0]
         ymax = yrange[1]
-      locs,labels = plt.yticks()
-      plt.yticks(locs, map(lambda x: "%.1f" % x, locs*1e9))
-      plt.axis([xmin, xmax, ymin, ymax])
-      plt.plot(xvals, yvals)
+      factor = 1.0
+      plt.ylabel(names[idx])
+#      if ymax < 1e-5:
+#        factor = 1e6
+#        locs,labels = plt.yticks()
+#        plt.yticks(locs, map(lambda x: "%f" % x, locs*factor))
+#        plt.ylabel(names[idx] + " (uM)")
+#        import pdb; pdb.set_trace()
+      plt.axis([xmin, xmax, factor*ymin, factor*ymax])
+      plt.plot(xvals, factor*yvals)
