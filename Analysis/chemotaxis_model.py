@@ -32,7 +32,7 @@ TIME = "time"
 TEMPLATE = "chemotaxis.tmpl"
 # Concentration constants
 B_conc = "1.7e-6"
-R_conc = "0.75e-6"  # Differs from Spiro's 0.3e-6
+R_conc = "0.3e-6"
 T2_conc = "8e-6"
 Y_conc = "20e-6"
 Z_conc = "40e-6"
