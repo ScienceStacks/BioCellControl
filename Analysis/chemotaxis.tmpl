@@ -26,17 +26,15 @@ J7_4{r}: T4{r} -> T4p{r}; k10*T4{r}
 J7_L2{r}: LT2{r} -> LT2p{r}; k11*LT2{r}
 J7_L3{r}: LT3{r} -> LT3p{r}; k12*LT3{r}
 J7_L4{r}: LT4{r} -> LT4p{r}; k13*LT4{r}
-# B & Y dephosphorylations
-J45: Bp -> B; k_b*Bp
-J46: Yp + Z -> Y + Z; k_y*Yp*Z    
 # B phosphorylations
 J8_{l}{m}{r}: {l}T{m}p{r} + B -> {l}T{m}{r} + Bp; kb*{l}T{m}p{r}*B
 # Y phosphorylations
 J9_{l}{m}{r}: {l}T{m}p{r} + Y -> {l}T{m}{r} + Yp; ky*{l}T{m}p{r}*Y
-# CONSTANTS from Spiro, Table 3, except k1a (which is noted above).
-k0 = 0
-ktuning = 1
-k1b = ktuning*k5
+# B & Y dephosphorylations
+J10: Bp -> B; k_b*Bp
+J11: Yp + Z -> Y + Z; k_y*Yp*Z    
+# Constants from Spiro, Table 3, except k1a (which is noted above).
+k1b = k5
 k1a = (1.7e-6)/k1b
 k2a = k1a
 k2b = k1b
@@ -62,4 +60,7 @@ kb = 8e5
 ky = 3e7
 k_b = 0.35
 k_y = 5e5
-x0 = 1
+# Other constants
+k0 = 0
+x0 = 1  # Used for ramp
+{l}T{m}{p}{r} = 0  # Declare variables
