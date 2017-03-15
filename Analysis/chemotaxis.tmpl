@@ -8,14 +8,14 @@ J1_2{p}R: T2{p}R -> T3{p} + R; k1c*T2{p}R
 J1_3{p}R: T3{p}R -> T4{p} + R; k2c*T3{p}R
 J1_L2{p}R: LT2{p}R -> LT3{p} + R; k3c*LT2{p}R
 J1_L3{p}R: LT3{p}R -> LT4{p} + R; k4c*LT3{p}R
-# Demethylations
+# Demethylations.
 J4a_3{p}{r}: T3{p}{r} + Bp -> T2{p}{r} + Bp; k_1*T3{p}{r}*Bp
 J4b_4{p}{r}: T4{p}{r} + Bp -> T3{p}{r} + Bp; k_2*T4{p}{r}*Bp
 J4c_L3{p}{r}: LT3{p}{r} + Bp -> LT2{p}{r} + Bp; k_3*LT3{p}{r}*Bp
 J4d_L4{p}{r}: LT4{p}{r} + Bp -> LT3{p}{r} + Bp; k_4*LT4{p}{r}*Bp
 #   Details of *T* + R <-> *T*R
 J2_{l}{m}{p}: {l}T{m}{p}R -> {l}T{m}{p} + R; k1a*{l}T{m}{p}R
-J3_{l}{m}{p}: {l}T{m}{p} + R -> {l}T{m}{p}R; k1b*{l}T{m}{p}
+J3_{l}{m}{p}: {l}T{m}{p} + R -> {l}T{m}{p}R; k1b*{l}T{m}{p}*R
 # Ligand binding and unbinding
 J5_{m}{p}{r}: L + T{m}{p}{r} -> LT{m}{p}{r}; k5*L*T{m}{p}{r}
 J6_{m}{p}{r}: LT{m}{p}{r} -> L + T{m}{p}{r}; k_5*LT{m}{p}{r}
@@ -35,7 +35,7 @@ J8_{l}{m}{r}: {l}T{m}p{r} + B -> {l}T{m}{r} + Bp; kb*{l}T{m}p{r}*B
 J9_{l}{m}{r}: {l}T{m}p{r} + Y -> {l}T{m}{r} + Yp; ky*{l}T{m}p{r}*Y
 # CONSTANTS from Spiro, Table 3, except k1a (which is noted above).
 k0 = 0
-ktuning = 1.5e-9
+ktuning = 1
 k1b = ktuning*k5
 k1a = (1.7e-6)/k1b
 k2a = k1a
@@ -62,22 +62,4 @@ kb = 8e5
 ky = 3e7
 k_b = 0.35
 k_y = 5e5
-# INITIAL VALUES from Spiro, Table 2
-Bp = 0
-LT2 = 0
-LT2R = 0
-LT3 = 0
-LT3R = 0
-LT4 = 0
-T2p = 0
-T3p = 0
-T4p = 0
-LT2p = 0
-LT3p = 0
-LT4p = 0
-T3 = 0
-T4 = 0
-T2R = 0
-T3R = 0
 x0 = 1
-Yp = 0

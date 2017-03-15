@@ -5,7 +5,8 @@ Assumptions:
 2. Start with all T as T2
 3. Dephosphorylation occurs at the same rate for bound and unbound receptors
 4. The system begins with all Tar in state T2 (doubly methylated)
-5. k1a is estimated based on the rates for k_on for the bimolecular reaction L + T -> LT, k_on = k5 = 7*10e7.
+5. k1a is estimated based on the rates for k_on for the
+   bimolecular reaction L + T -> LT, k_on = k5 = 7*10e7.
    We use the constant ktuning to adjust the fraction of k5 that's used
 6. Methylation of LTn has the same kinetics as methylation of Tn (not explicit in Spiro)
 
@@ -31,11 +32,11 @@ SIM_SAMPLES_PER_TIME = 10
 TIME = "time"
 TEMPLATE = "chemotaxis.tmpl"
 # Concentration constants
-B_conc = "1.7e-6"
-R_conc = "0.3e-6"
-T2_conc = "8e-6"
-Y_conc = "20e-6"
-Z_conc = "40e-6"
+B_CONC = "1.7e-6"
+R_CONC = "0.3e-6"
+T2_CONC = "8e-6"
+Y_CONC = "20e-6"
+Z_CONC = "40e-6"
 
 
 
@@ -60,11 +61,11 @@ class ChemotaxisModel(object):
     writes: _template_model, _antimony_model
     """
     lines = []
-    with open(self._template) as file:  
+    with open(self._template) as file:
       lines.append(file.read())
     self._template_model = "\n".join(lines)
     names = ['B', 'R', 'T2', 'Y', 'Z']
-    values = [B_conc, R_conc, T2_conc, Y_conc, Z_conc]
+    values = [B_CONC, R_CONC, T2_CONC, Y_CONC, Z_CONC]
     pairs = zip(names, values)
     suffixes = ["%s = %s" % (n, v) for n, v in pairs]
     for suffix in suffixes:
@@ -76,7 +77,7 @@ class ChemotaxisModel(object):
     """
     Assembles the final the model
     """
-    return "%s\n%s\n%s" % (ChemotaxisModel.MODEL_START, 
+    return "%s\n%s\n%s" % (ChemotaxisModel.MODEL_START,  \
         self._antimony_model, ChemotaxisModel.MODEL_END)
 
   def initialize(self):
@@ -106,7 +107,8 @@ class ChemotaxisModel(object):
     """
     Adds the string to the end of the model
     """
-    self._antimony_model = "%s\n%s" % (self._antimony_model, stg)
+    self._antimony_model = "%s\n%s"  \
+        % (self._antimony_model, stg)
 
   def getModel(self, is_template=True):
     """
@@ -122,16 +124,16 @@ class ChemotaxisModel(object):
     return ReceptorStates(self._result)
 
   def getYpFraction(self):
-    Yp = self.getVariable('Yp')
-    Y = self.getVariable('Y')
-    total_Y = Yp + Y
-    return Yp/total_Y
+    var_Yp = self.getVariable('Yp')
+    var_Y = self.getVariable('Y')
+    total_Y = var_Yp + var_Y
+    return var_Yp/total_Y
 
   def getBpFraction(self):
-    Bp = self.getVariable('Bp')
-    B = self.getVariable('B')
-    total_B = Bp + B
-    return Bp/total_B
+    var_Bp = self.getVariable('Bp')
+    var_B = self.getVariable('B')
+    total_B = var_Bp + var_B
+    return var_Bp/total_B
 
   def getResult(self):
     return self._result
@@ -177,7 +179,7 @@ class State(object):
   Represents a single element of the Receptor state.
   """
 
-  def __init__(self, is_boundL, is_phosphorylated, is_boundR, 
+  def __init__(self, is_boundL, is_phosphorylated, is_boundR, \
       methylation, simulation_result):
     """
     :param bool is_boundL: bound to a ligand
@@ -207,11 +209,7 @@ class State(object):
     return name
 
   def _extractData(self, simulation_result):
-    try:
-      return simulation_result[self._name]
-    except Exception as e:
-      import pdb; pdb.set_trace()
-      pass
+    return simulation_result[self._name]
 
   def getName(self):
     return self._name
@@ -234,7 +232,7 @@ class ReceptorStates(object):
     Is phosphorylated (True) or not (False)
     Methylation level (an int)
   """
-  
+
   def __init__(self, result):
     """
     Takes as input a structured array from a simulation result.
@@ -254,7 +252,7 @@ class ReceptorStates(object):
           for m in methylations:
             states.append(State(l, p, r, m, self._result))
     self._states = states
-    total = self.sumStates(lambda l,m,r,p: True)
+    total = self.sumStates(lambda l, p, r, m: True)
     [s.setNominalValue(total) for s in states]
 
   def selectStates(self, func):
@@ -263,7 +261,7 @@ class ReceptorStates(object):
     :param bool-Function func: arguments are is_boundL, is_phosphorylated, methylation
     :return list-of-State: those states for which func returns True
     """
-    return [s for s in self._states 
+    return [s for s in self._states
             if func(s.is_boundL, s.is_phosphorylated, s.is_boundR, s.methylation)]
 
   def sumStates(self, func):
@@ -273,7 +271,7 @@ class ReceptorStates(object):
     :return ndarray:
     """
     data = [s.getData() for s in self.selectStates(func)]
-    return(sum(data))
+    return sum(data)
 
   def frcStates(self, func):
     """
@@ -282,7 +280,7 @@ class ReceptorStates(object):
     :return ndarray:
     """
     data = [s.getNominalData() for s in self.selectStates(func)]
-    return(sum(data))
+    return sum(data)
 
 class StateAggregationFactory(object):
   """
@@ -331,10 +329,10 @@ class StateAggregationFactory(object):
         else:
           is_valid = False
     if not is_valid:
-      raise ValueError("In name %s, the character %s in position %d is invalid."
-          % (name, letter, position))
+      msg = "In name %s, the character %s in position %d is invalid."
+      raise ValueError(msg) % (name, letter, position)
     return func
-  
+
   def v(self, name):
     """
     Returns the values for the name
@@ -347,9 +345,10 @@ class StateAggregationFactory(object):
     lfunc = self._getFunc(name, 1, valid_boolean_function)
     pfunc = self._getFunc(name, 2, valid_boolean_function)
     rfunc = self._getFunc(name, 3, valid_boolean_function)
-    mfunc = self._getFunc(name, 4, 
-        lambda x: isinstance(int(x),int) and int(x) > 1 and int(x) < 5)
-    func = (lambda l,p,r,m: lfunc(l) and pfunc(p) and rfunc(p) and mfunc(m))
+    mfunc = self._getFunc(name, 4,  \
+        lambda x: isinstance(int(x), int) and int(x) > 1 and int(x) < 5)
+    func = (lambda l, p, r, m: lfunc(l)  \
+        and pfunc(p) and rfunc(p) and mfunc(m))
     if name[0] == "t":
       result = self._receptor_states.sumStates(func)
     else:

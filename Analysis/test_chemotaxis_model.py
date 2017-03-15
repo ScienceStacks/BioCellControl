@@ -1,6 +1,6 @@
 import unittest
 from chemotaxis_model import ChemotaxisModel, ReceptorStates, State,  \
-    T2_conc, StateAggregationFactory, R_conc, B_conc, Y_conc
+    T2_CONC, StateAggregationFactory, R_CONC, B_CONC, Y_CONC
 
 
 IGNORE_TEST = False
@@ -30,7 +30,7 @@ class TestChemotaxisModelBasic(unittest.TestCase):
     if IGNORE_TEST:
       return
     rr = self.model.initialize()
-    self.assertTrue(abs(self.model._rr.R - float(R_conc)) <= 1e-9)
+    self.assertTrue(abs(self.model._rr.R - float(R_CONC)) <= 1e-9)
 
   def testRun(self):
     if IGNORE_TEST:
@@ -41,7 +41,7 @@ class TestChemotaxisModelBasic(unittest.TestCase):
   def testGetVariable(self):
     Y = self.model.getVariable("Y")
     Yp = self.model.getVariable("Yp")
-    b = [y == Y_conc for y in Y + Yp]
+    b = [y == Y_CONC for y in Y + Yp]
     self.assertTrue(b)
     #
     fYp = self.model.getVariable("fYp")
@@ -54,7 +54,7 @@ class TestChemotaxisModelBasic(unittest.TestCase):
     #
     B = self.model.getVariable("B")
     Bp = self.model.getVariable("Bp")
-    b = [y == B_conc for y in B + Bp]
+    b = [y == B_CONC for y in B + Bp]
     self.assertTrue(b)
     #
     var = self.model.getVariable("J1_2R")
@@ -133,7 +133,7 @@ class TestReceptorStates(unittest.TestCase):
     func = (lambda l,p,r,m: True)
     receptor = ReceptorStates(self.model.getResult())
     total = receptor.sumStates(func)
-    T = float(T2_conc)
+    T = float(T2_CONC)
     b = all([abs(T-x)/T < 0.01 for x in total])
     self.assertTrue(b)
 
