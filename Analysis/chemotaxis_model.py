@@ -227,10 +227,11 @@ class State(object):
 class ReceptorStates(object):
   """
   Provides information about the state of receptors over time.
-  The state has 3 components:
-    Is bound to a Ligand (True) or not (False)
-    Is phosphorylated (True) or not (False)
-    Methylation level (an int)
+  The state has 4 components:
+    Is bound to a Ligand (boolean)
+    Is phosphorylated (boolean)
+    Is bound to CheR (boolean)
+    Methylation level (int)
   """
 
   def __init__(self, result):
