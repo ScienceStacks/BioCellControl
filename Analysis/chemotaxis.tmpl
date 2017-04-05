@@ -1,6 +1,6 @@
 # Template file for the Spiro model of chemotaxis in PNAS, 1999.
 # The species B, R, T2, R, Y are specified separately.
-#! SbStar Vesion 1.0 {'l': ['L', ''], 'm': ['2', '3', '4'], 'p': ['P', ''], 'r': ['R', '']} 
+#! SbStar Vesion 1.0 {'l': ['L', ''], 'm': ['2', '3', '4'], 'p': ['p', ''], 'r': ['R', '']} 
 J0: $x0 -> L; k0*x0
 # REACTIONS from Spiro, Table 3
 # Methylation
@@ -64,3 +64,6 @@ k_y = 5e5
 k0 = 0
 x0 = 1  # Used for ramp
 {l}T{m}{p}{r} = 0  # Declare variables
+B{p} = 0
+Y{p} = 0
+L = 0
