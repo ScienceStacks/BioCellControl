@@ -330,8 +330,9 @@ class StateAggregationFactory(object):
         else:
           is_valid = False
     if not is_valid:
-      msg = "In name %s, the character %s in position %d is invalid."
-      raise ValueError(msg) % (name, letter, position)
+      msg = "In name %s, the character %s in position %d is invalid."  \
+          % (name, letter, position)
+      raise ValueError(msg)
     return func
 
   def v(self, name):
