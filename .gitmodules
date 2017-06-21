@@ -1,3 +1,6 @@
 [submodule "SbStar"]
 	path = SbStar
 	url = https://github.com/ScienceStacks/SbStar.git
+[submodule "TemplateSB"]
+	path = TemplateSB
+	url = https://github.com/ScienceStacks/TemplateSB.git

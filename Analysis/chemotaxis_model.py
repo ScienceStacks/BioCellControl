@@ -22,9 +22,9 @@ The classes are:
  State represents a single element of the state of receptors
 """
 import sys
-sys.path.append("../SbStar/Code")
+sys.path.append("../TemplateSB/TemplateSB")
 import tellurium as te
-from sbstar import SbStar
+from templatesb import TemplateSB
 
 SIM_START = 0  # Simulation start time
 SIM_END = 500  # Simulation end time
@@ -70,8 +70,8 @@ class ChemotaxisModel(object):
     suffixes = ["%s = %s" % (n, v) for n, v in pairs]
     for suffix in suffixes:
       self._template_model += suffix + "\n"
-    sbstar = SbStar(self._template_model)
-    self._antimony_model = sbstar.expand()
+    templatesb = TemplateSB(self._template_model)
+    self._antimony_model = templatesb.expand()
 
   def _assembleModel(self):
     """
