@@ -24,7 +24,7 @@ The classes are:
 import sys
 sys.path.append("../TemplateSB/TemplateSB")
 import tellurium as te
-from templatesb import TemplateSB
+from template_processor import TemplateProcessor
 
 SIM_START = 0  # Simulation start time
 SIM_END = 500  # Simulation end time
@@ -70,8 +70,8 @@ class ChemotaxisModel(object):
     suffixes = ["%s = %s" % (n, v) for n, v in pairs]
     for suffix in suffixes:
       self._template_model += suffix + "\n"
-    templatesb = TemplateSB(self._template_model)
-    self._antimony_model = templatesb.expand()
+    processor = TemplateProcessor(self._template_model)
+    self._antimony_model = processor.do()
 
   def _assembleModel(self):
     """
